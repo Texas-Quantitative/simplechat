@@ -372,8 +372,60 @@
     padding: 2px 0;
   }
 
-  /* STATS TABLE */
-  .modal.modal-wide { width: 660px; }
+  /* STATS */
+  .modal.modal-wide { width: 860px; max-width: 96vw; }
+  #statsContent { max-height: 480px; overflow-y: auto; }
+
+  .stats-toolbar {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .stats-tabs { display: flex; gap: 4px; }
+  .stats-tab {
+    padding: 5px 13px; border-radius: 6px;
+    font-size: 12px; font-family: var(--mono);
+    cursor: pointer; border: 1px solid var(--border2);
+    background: var(--bg3); color: var(--text2);
+    transition: all 0.15s;
+  }
+  .stats-tab.active { background: var(--accent-bg); border-color: var(--accent-border); color: var(--accent2); }
+  .stats-metric-toggle { display: flex; gap: 4px; margin-left: auto; }
+  .stats-metric-btn {
+    padding: 4px 10px; border-radius: 5px;
+    font-size: 11px; font-family: var(--mono);
+    cursor: pointer; border: 1px solid var(--border2);
+    background: var(--bg3); color: var(--text3);
+    transition: all 0.15s;
+  }
+  .stats-metric-btn.active { background: var(--accent-bg); border-color: var(--accent-border); color: var(--accent2); }
+  .stats-sort-label { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+  .stats-sort {
+    background: var(--bg3); border: 1px solid var(--border2);
+    border-radius: 6px; padding: 4px 8px;
+    font-family: var(--mono); font-size: 12px; color: var(--text);
+    outline: none; cursor: pointer; appearance: none;
+  }
+  .stats-sort:focus { border-color: var(--accent-border); }
+  .stats-dir-btn {
+    background: var(--bg3); border: 1px solid var(--border2);
+    border-radius: 6px; padding: 4px 8px;
+    font-family: var(--mono); font-size: 11px; color: var(--text2);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .stats-dir-btn:hover { border-color: var(--accent-border); color: var(--accent2); }
+
+  .stats-server-group { margin-bottom: 10px; }
+  .stats-server-header {
+    padding: 6px 10px;
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: var(--mono); font-size: 11px; color: var(--text2);
+    margin-bottom: 2px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .stats-server-header .server-url { color: var(--accent2); }
+  .stats-server-header .server-count { margin-left: auto; color: var(--text3); font-size: 10px; }
+
   .stats-table {
     width: 100%; border-collapse: collapse;
     font-family: var(--mono); font-size: 12px;
@@ -381,19 +433,24 @@
   .stats-table th {
     text-align: left; color: var(--text3);
     font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
-    padding: 4px 10px 8px; border-bottom: 1px solid var(--border2);
+    padding: 4px 8px 6px; border-bottom: 1px solid var(--border2);
     white-space: nowrap;
   }
   .stats-table td {
-    padding: 8px 10px; border-bottom: 1px solid var(--border);
-    color: var(--text);
+    padding: 7px 8px; border-bottom: 1px solid var(--border);
+    color: var(--text); vertical-align: middle;
   }
   .stats-table tbody tr:last-child td { border-bottom: none; }
   .stats-table tbody tr:hover td { background: var(--bg3); }
-  .stats-table td:first-child { color: var(--accent2); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .stats-table td.model-cell { color: var(--accent2); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .stats-table td.server-cell { color: var(--text2); max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; }
   .stats-table td.num { color: var(--text2); }
-  .stats-table td.best { color: var(--green); }
-  .stats-no-data { color: var(--text3); font-size: 12px; font-family: var(--mono); text-align: center; padding: 24px 0; }
+  .stats-table td.best { color: var(--green); font-weight: 500; }
+  .bar-cell { width: 100px; min-width: 80px; }
+  .stat-bar-bg { background: var(--bg4); border-radius: 3px; height: 5px; overflow: hidden; margin-top: 2px; }
+  .stat-bar-fill { height: 100%; border-radius: 3px; background: var(--accent); transition: width 0.4s ease; }
+  .stat-bar-fill.best { background: var(--green); }
+  .stats-no-data { color: var(--text3); font-size: 12px; font-family: var(--mono); text-align: center; padding: 32px 0; }
 
   /* MODAL */
   .modal-backdrop {
@@ -542,9 +599,10 @@
 <!-- STATS MODAL -->
 <div class="modal-backdrop" id="statsModal">
   <div class="modal modal-wide">
-    <h3><i class="ti ti-chart-bar" style="margin-right:6px;font-size:15px;vertical-align:middle"></i>Model Performance</h3>
+    <h3 style="margin-bottom:4px"><i class="ti ti-chart-bar" style="margin-right:6px;font-size:15px;vertical-align:middle"></i>Model Performance</h3>
+    <p style="font-size:11px;color:var(--text3);font-family:var(--mono);margin-bottom:14px">Response times and throughput by server &amp; model</p>
     <div id="statsContent"></div>
-    <div class="modal-btns" style="margin-top:14px">
+    <div class="modal-btns" style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px">
       <button class="btn-cancel" id="statsCloseBtn">Close</button>
     </div>
   </div>
@@ -651,6 +709,7 @@ let conversations = [];
 let activeId = null;
 let abortController = null;
 let isStreaming = false;
+const statsState = { tab: 'server', sort: 'mean', dir: 'asc', metric: 'time' };
 
 // Keep a persistent reference so container.innerHTML can't orphan it
 const $emptyState = document.getElementById('emptyState');
@@ -915,7 +974,7 @@ async function sendMessage() {
   appendMsgToDOM(userMsg, conv.messages.length - 1);
 
   // Create AI placeholder
-  const aiMsg = { role: 'assistant', content: '', ts: Date.now(), model };
+  const aiMsg = { role: 'assistant', content: '', ts: Date.now(), model, endpoint };
   conv.messages.push(aiMsg);
   const aiIdx = conv.messages.length - 1;
   appendStreamingMsg(aiIdx);
@@ -1049,49 +1108,166 @@ function appendStreamingMsg(idx) {
 
 // ─── MODEL STATS ──────────────────────────────────────────────────────────────
 function computeModelStats() {
+  // Returns flat array of { server, model, count, min, max, mean, tpsMean }
   const map = {};
   for (const conv of conversations) {
     for (const m of conv.messages) {
       if (m.role !== 'assistant' || !m.durationMs) continue;
-      const key = m.model || 'unknown';
-      if (!map[key]) map[key] = { durations: [], tpsValues: [] };
+      const server = m.endpoint || 'unknown';
+      const model  = m.model    || 'unknown';
+      const key = server + '\x00' + model;
+      if (!map[key]) map[key] = { server, model, durations: [], tpsValues: [] };
       map[key].durations.push(m.durationMs);
       if (m.tokensPerSec) map[key].tpsValues.push(m.tokensPerSec);
     }
   }
-  return Object.entries(map).map(([model, d]) => {
+  return Object.values(map).map(d => {
     const durs = d.durations;
     const mean = durs.reduce((a, b) => a + b, 0) / durs.length;
     const tpsMean = d.tpsValues.length
       ? d.tpsValues.reduce((a, b) => a + b, 0) / d.tpsValues.length : null;
-    return { model, count: durs.length, min: Math.min(...durs), max: Math.max(...durs), mean, tpsMean };
-  }).sort((a, b) => b.count - a.count);
+    return { server: d.server, model: d.model, count: durs.length,
+             min: Math.min(...durs), max: Math.max(...durs), mean, tpsMean };
+  });
+}
+
+function renderStatsContent() {
+  const rows = computeModelStats();
+  const { tab, sort, dir, metric } = statsState;
+  const content = document.getElementById('statsContent');
+
+  if (rows.length === 0) {
+    content.innerHTML = '<div class="stats-no-data">No timing data yet — send some messages first.</div>';
+    return;
+  }
+
+  const fmtT  = ms => (ms / 1000).toFixed(2) + 's';
+  const fmtTps = v  => v !== null ? Math.round(v) + ' t/s' : '—';
+
+  // ── toolbar ────────────────────────────────────────────────────────────────
+  const sortControls = tab === 'all' ? `
+    <span class="stats-sort-label">Sort</span>
+    <select class="stats-sort" onchange="statsState.sort=this.value;renderStatsContent()">
+      <option value="mean"  ${sort==='mean'  ?'selected':''}>Mean time</option>
+      <option value="min"   ${sort==='min'   ?'selected':''}>Min time</option>
+      <option value="max"   ${sort==='max'   ?'selected':''}>Max time</option>
+      <option value="count" ${sort==='count' ?'selected':''}>Responses</option>
+      <option value="tpsMean" ${sort==='tpsMean'?'selected':''}>Tok/s</option>
+    </select>
+    <button class="stats-dir-btn" onclick="statsState.dir=statsState.dir==='asc'?'desc':'asc';renderStatsContent()">${dir==='asc'?'↑ asc':'↓ desc'}</button>` : '';
+
+  const toolbar = `
+    <div class="stats-toolbar">
+      <div class="stats-tabs">
+        <button class="stats-tab ${tab==='server'?'active':''}" onclick="statsState.tab='server';renderStatsContent()">By Server</button>
+        <button class="stats-tab ${tab==='all'?'active':''}"    onclick="statsState.tab='all';renderStatsContent()">All Results</button>
+      </div>
+      ${sortControls}
+      <div class="stats-metric-toggle">
+        <button class="stats-metric-btn ${metric==='time'?'active':''}" onclick="statsState.metric='time';renderStatsContent()">Time</button>
+        <button class="stats-metric-btn ${metric==='tps'?'active':''}"  onclick="statsState.metric='tps';renderStatsContent()">Tok/s</button>
+      </div>
+    </div>`;
+
+  // helper: build a bar + best-highlight for one row
+  function rowClass(val, bestVal) { return val === bestVal ? 'best' : 'num'; }
+  function bar(val, maxVal, isBest) {
+    const pct = maxVal > 0 ? Math.round((val / maxVal) * 100) : 0;
+    return `<div class="stat-bar-bg"><div class="stat-bar-fill${isBest?' best':''}" style="width:${pct}%"></div></div>`;
+  }
+
+  // ── By Server view ─────────────────────────────────────────────────────────
+  if (tab === 'server') {
+    const byServer = {};
+    for (const r of rows) {
+      if (!byServer[r.server]) byServer[r.server] = [];
+      byServer[r.server].push(r);
+    }
+    // global max for cross-server bar normalisation
+    const maxVal = metric === 'time'
+      ? Math.max(...rows.map(r => r.mean))
+      : Math.max(...rows.map(r => r.tpsMean ?? 0));
+
+    let html = toolbar;
+    for (const [server, sRows] of Object.entries(byServer)) {
+      const total = sRows.reduce((s, r) => s + r.count, 0);
+      // best within this server group
+      const bestVal = metric === 'time'
+        ? Math.min(...sRows.map(r => r.mean))
+        : Math.max(...sRows.map(r => r.tpsMean ?? -Infinity));
+
+      const tableRows = sRows
+        .slice().sort((a, b) => a.mean - b.mean)
+        .map(r => {
+          const metricVal = metric === 'time' ? r.mean : (r.tpsMean ?? 0);
+          const isBest = metricVal === bestVal && metricVal > 0;
+          return `<tr>
+            <td class="model-cell">${escHtml(r.model)}</td>
+            <td class="num">${r.count}</td>
+            <td class="num">${fmtT(r.min)}</td>
+            <td class="num">${fmtT(r.max)}</td>
+            <td class="${metric==='time' ? rowClass(r.mean, bestVal) : 'num'}">${fmtT(r.mean)}</td>
+            <td class="${metric==='tps'  ? rowClass(r.tpsMean, bestVal) : 'num'}">${fmtTps(r.tpsMean)}</td>
+            <td class="bar-cell">${bar(metricVal, maxVal, isBest)}</td>
+          </tr>`;
+        }).join('');
+
+      html += `
+        <div class="stats-server-group">
+          <div class="stats-server-header">
+            <i class="ti ti-server"></i>
+            <span class="server-url">${escHtml(server)}</span>
+            <span class="server-count">${total} response${total !== 1 ? 's' : ''}</span>
+          </div>
+          <table class="stats-table">
+            <thead><tr><th>Model</th><th>n</th><th>Min</th><th>Max</th><th>Mean</th><th>Tok/s</th><th></th></tr></thead>
+            <tbody>${tableRows}</tbody>
+          </table>
+        </div>`;
+    }
+    content.innerHTML = html;
+
+  // ── All Results view (flat, sortable) ───────────────────────────────────────
+  } else {
+    let sorted = rows.slice().sort((a, b) => {
+      const av = a[sort] ?? (dir === 'asc' ? Infinity : -Infinity);
+      const bv = b[sort] ?? (dir === 'asc' ? Infinity : -Infinity);
+      return dir === 'asc' ? av - bv : bv - av;
+    });
+
+    const maxVal  = metric === 'time'
+      ? Math.max(...sorted.map(r => r.mean))
+      : Math.max(...sorted.map(r => r.tpsMean ?? 0));
+    const bestVal = metric === 'time'
+      ? Math.min(...sorted.map(r => r.mean))
+      : Math.max(...sorted.map(r => r.tpsMean ?? -Infinity));
+
+    const tableRows = sorted.map(r => {
+      const metricVal = metric === 'time' ? r.mean : (r.tpsMean ?? 0);
+      const isBest = metricVal === bestVal && metricVal > 0;
+      const serverShort = r.server.replace(/^https?:\/\//, '');
+      return `<tr>
+        <td class="server-cell" title="${escHtml(r.server)}">${escHtml(serverShort)}</td>
+        <td class="model-cell">${escHtml(r.model)}</td>
+        <td class="num">${r.count}</td>
+        <td class="num">${fmtT(r.min)}</td>
+        <td class="num">${fmtT(r.max)}</td>
+        <td class="${metric==='time' ? rowClass(r.mean, bestVal) : 'num'}">${fmtT(r.mean)}</td>
+        <td class="${metric==='tps'  ? rowClass(r.tpsMean, bestVal) : 'num'}">${fmtTps(r.tpsMean)}</td>
+        <td class="bar-cell">${bar(metricVal, maxVal, isBest)}</td>
+      </tr>`;
+    }).join('');
+
+    content.innerHTML = toolbar + `
+      <table class="stats-table">
+        <thead><tr><th>Server</th><th>Model</th><th>n</th><th>Min</th><th>Max</th><th>Mean</th><th>Tok/s</th><th></th></tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>`;
+  }
 }
 
 function showStatsModal() {
-  const stats = computeModelStats();
-  const content = document.getElementById('statsContent');
-  if (stats.length === 0) {
-    content.innerHTML = '<div class="stats-no-data">No timing data yet — send some messages first.</div>';
-  } else {
-    const fmt = ms => (ms / 1000).toFixed(2) + 's';
-    // find best (lowest mean) for highlighting
-    const bestMean = Math.min(...stats.map(s => s.mean));
-    const rows = stats.map(s => `<tr>
-      <td>${escHtml(s.model)}</td>
-      <td class="num">${s.count}</td>
-      <td class="num">${fmt(s.min)}</td>
-      <td class="num">${fmt(s.max)}</td>
-      <td class="${s.mean === bestMean ? 'best' : 'num'}">${fmt(s.mean)}</td>
-      <td class="num">${s.tpsMean !== null ? Math.round(s.tpsMean) + ' tok/s' : '—'}</td>
-    </tr>`).join('');
-    content.innerHTML = `<table class="stats-table">
-      <thead><tr>
-        <th>Model</th><th>Responses</th><th>Min</th><th>Max</th><th>Mean</th><th>Avg tok/s</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`;
-  }
+  renderStatsContent();
   document.getElementById('statsModal').classList.add('open');
 }
 
